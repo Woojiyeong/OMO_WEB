@@ -35,7 +35,7 @@
 .reveal-group.is-visible .reveal-child {
   opacity: 1;
   transform: translateY(0);
-  animation: omo-reveal-up 720ms cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms)
+  animation: omo-reveal-up 1080ms cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms)
     backwards;
 }
 
@@ -661,9 +661,9 @@
   filter: blur(6px);
   transform: translateY(40px) scale(0.985);
   transition:
-    opacity 520ms ease,
-    filter 520ms ease,
-    transform 680ms cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 860ms ease,
+    filter 860ms ease,
+    transform 1120ms cubic-bezier(0.22, 1, 0.36, 1);
   will-change: opacity, filter, transform;
 }
 
@@ -705,9 +705,9 @@
   filter: drop-shadow(0 18px 28px rgba(81, 30, 56, 0.08));
   transform: translateY(30px) scale(0.955) rotate(1.2deg);
   transition:
-    opacity 560ms ease,
-    filter 560ms ease,
-    transform 760ms cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 860ms ease,
+    filter 860ms ease,
+    transform 1120ms cubic-bezier(0.22, 1, 0.36, 1);
   user-select: none;
   will-change: opacity, filter, transform;
 }
@@ -727,7 +727,7 @@
 }
 
 .feature-item.is-active .feature-media img:nth-child(2) {
-  transition-delay: 110ms;
+  transition-delay: 180ms;
 }
 
 .feature-item.is-active .feature-media img.feature-image-top-crop {
@@ -747,8 +747,8 @@
   opacity: 0;
   transform: translateX(28px);
   transition:
-    opacity 500ms ease,
-    transform 680ms cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 820ms ease,
+    transform 1080ms cubic-bezier(0.22, 1, 0.36, 1);
   transition-delay: 0ms;
   will-change: opacity, transform;
   word-break: keep-all;
@@ -765,7 +765,7 @@
 .feature-item.is-active .feature-copy {
   opacity: 1;
   transform: translateX(0);
-  transition-delay: 130ms;
+  transition-delay: 210ms;
 }
 
 .feature-item h3,
@@ -773,8 +773,8 @@
   opacity: 0;
   transform: translateY(14px);
   transition:
-    opacity 420ms ease,
-    transform 560ms cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 720ms ease,
+    transform 920ms cubic-bezier(0.22, 1, 0.36, 1);
   will-change: opacity, transform;
 }
 
@@ -785,7 +785,7 @@
 }
 
 .feature-item.is-active p {
-  transition-delay: 180ms;
+  transition-delay: 280ms;
 }
 
 .feature-item h3 {
@@ -1758,30 +1758,5 @@
   .final-cta h2 {
     max-width: calc(100% - 24px);
     font-size: clamp(18px, 5.6vw, 22px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 1ms !important;
-    animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
-    transition-duration: 1ms !important;
-  }
-
-  .hero-copy h1 span,
-  .phone-cluster,
-  .reveal-group .reveal-child,
-  .feature-item.is-active,
-  .feature-item.is-active .feature-media img,
-  .feature-item.is-active .feature-media img.feature-image-top-crop,
-  .feature-item.is-active .feature-copy,
-  .feature-item.is-active h3,
-  .feature-item.is-active p {
-    opacity: 1;
-    filter: none;
-    transform: none;
   }
 }
