@@ -574,11 +574,19 @@
 .features-section {
   width: 100%;
   height: var(--feature-scroll-height);
+  min-height: var(--feature-scroll-height);
   padding: 0;
   background:
     linear-gradient(90deg, rgba(81, 30, 56, 0.04) 1px, transparent 1px),
     linear-gradient(180deg, #ffffff 0%, #fff0f7 100%);
   background-size: 72px 72px, auto;
+}
+
+@supports (height: 100svh) {
+  .features-section {
+    height: var(--feature-scroll-height-stable);
+    min-height: var(--feature-scroll-height-stable);
+  }
 }
 
 .features-sticky {
@@ -1766,12 +1774,12 @@
   .hero-copy h1 span,
   .phone-cluster,
   .reveal-group .reveal-child,
-  .feature-item,
-  .feature-media img,
+  .feature-item.is-active,
+  .feature-item.is-active .feature-media img,
   .feature-item.is-active .feature-media img.feature-image-top-crop,
-  .feature-copy,
-  .feature-item h3,
-  .feature-item p {
+  .feature-item.is-active .feature-copy,
+  .feature-item.is-active h3,
+  .feature-item.is-active p {
     opacity: 1;
     filter: none;
     transform: none;
