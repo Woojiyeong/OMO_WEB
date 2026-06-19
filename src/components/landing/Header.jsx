@@ -7,7 +7,18 @@ const navItems = [
   { href: '#developers', label: 'Contact' },
 ];
 
-function Header() {
+function Header({ onNavigate }) {
+  const handleNavigate = (event) => {
+    const sectionId = event.currentTarget.hash.slice(1);
+
+    if (!sectionId || !onNavigate) {
+      return;
+    }
+
+    event.preventDefault();
+    onNavigate(sectionId);
+  };
+
   return (
     <header className="site-header">
       <nav className="site-nav" aria-label="주요 메뉴">
@@ -15,13 +26,14 @@ function Header() {
           className="site-logo"
           href="#home"
           aria-label="오모 홈으로 이동"
+          onClick={handleNavigate}
         >
           <img src="/omo.svg" alt="" />
         </a>
 
         <div className="site-nav-links">
           {navItems.map((item) => (
-            <a href={item.href} key={item.href}>
+            <a href={item.href} key={item.href} onClick={handleNavigate}>
               {item.label}
             </a>
           ))}

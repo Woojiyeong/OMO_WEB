@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import '../App.css';
 import AboutSection from '../components/landing/AboutSection';
 import DeveloperSection from '../components/landing/DeveloperSection';
@@ -59,8 +59,97 @@ const features = [
 
 const FOOTER_HOME_DELAY_MS = 30_000;
 const FOOTER_AREA_OFFSET_PX = 120;
+const HOME_SECTION_ID = 'home';
+const MIN_SCROLL_DURATION_MS = 720;
+const MAX_SCROLL_DURATION_MS = 1300;
+
+const easeInOutCubic = (progress) => (
+  progress < 0.5
+    ? 4 * progress ** 3
+    : 1 - ((-2 * progress + 2) ** 3) / 2
+);
 
 function LandingPage() {
+  const scrollAnimationTimerRef = useRef(0);
+
+  const scrollToTopPosition = useCallback((targetTop, behavior = 'smooth') => {
+    const scrollingElement = document.scrollingElement || document.documentElement;
+    const maxScrollTop = Math.max(scrollingElement.scrollHeight - window.innerHeight, 0);
+    const destinationTop = Math.min(Math.max(targetTop, 0), maxScrollTop);
+    const startTop = window.scrollY || scrollingElement.scrollTop || document.body.scrollTop || 0;
+    const distance = destinationTop - startTop;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const setScrollTop = (nextTop) => {
+      scrollingElement.scrollTop = nextTop;
+      document.documentElement.scrollTop = nextTop;
+      document.body.scrollTop = nextTop;
+    };
+
+    window.clearTimeout(scrollAnimationTimerRef.current);
+    document.documentElement.style.scrollBehavior = 'auto';
+    document.body.style.scrollBehavior = 'auto';
+
+    const restoreScrollBehavior = () => {
+      document.documentElement.style.scrollBehavior = '';
+      document.body.style.scrollBehavior = '';
+    };
+
+    if (behavior === 'auto' || prefersReducedMotion || Math.abs(distance) < 2) {
+      setScrollTop(destinationTop);
+      restoreScrollBehavior();
+      return;
+    }
+
+    const duration = Math.min(
+      Math.max(Math.abs(distance) * 0.42, MIN_SCROLL_DURATION_MS),
+      MAX_SCROLL_DURATION_MS,
+    );
+    let startTime = 0;
+
+    const animateScroll = () => {
+      const currentTime = performance.now();
+
+      if (!startTime) {
+        startTime = currentTime;
+      }
+
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const nextTop = startTop + distance * easeInOutCubic(progress);
+
+      setScrollTop(nextTop);
+
+      if (progress < 1) {
+        scrollAnimationTimerRef.current = window.setTimeout(animateScroll, 16);
+        return;
+      }
+
+      setScrollTop(destinationTop);
+      restoreScrollBehavior();
+    };
+
+    scrollAnimationTimerRef.current = window.setTimeout(animateScroll, 0);
+  }, []);
+
+  const scrollToSection = useCallback((sectionId, { behavior = 'smooth', historyMode = 'push' } = {}) => {
+    const target = document.getElementById(sectionId);
+
+    if (!target) {
+      return;
+    }
+
+    const nextHash = `#${sectionId}`;
+
+    if (historyMode === 'replace') {
+      window.history.replaceState(null, '', nextHash);
+    } else if (window.location.hash !== nextHash) {
+      window.history.pushState(null, '', nextHash);
+    }
+
+    const targetTop = target.getBoundingClientRect().top + window.scrollY;
+    scrollToTopPosition(targetTop, behavior);
+  }, [scrollToTopPosition]);
+
   useLayoutEffect(() => {
     const canControlScrollRestoration = 'scrollRestoration' in window.history;
     const previousScrollRestoration = window.history.scrollRestoration;
@@ -76,6 +165,8 @@ function LandingPage() {
     });
 
     return () => {
+      window.clearTimeout(scrollAnimationTimerRef.current);
+
       if (canControlScrollRestoration) {
         window.history.scrollRestoration = previousScrollRestoration;
       }
@@ -134,23 +225,15 @@ function LandingPage() {
     const finishReturningHome = () => {
       isReturningHome = false;
       clearFooterTimer();
-      window.history.replaceState(null, '', '#home');
+      window.history.replaceState(null, '', `#${HOME_SECTION_ID}`);
       resetRevealAnimations();
     };
 
     const returnToHome = () => {
-      const homeSection = document.getElementById('home');
-
       isReturningHome = true;
       clearFooterTimer();
       window.clearTimeout(returnHomeTimerId);
-      window.history.replaceState(null, '', '#home');
-
-      if (homeSection) {
-        homeSection.scrollIntoView({ block: 'start', behavior: 'smooth' });
-      } else {
-        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-      }
+      scrollToSection(HOME_SECTION_ID, { behavior: 'smooth', historyMode: 'replace' });
 
       returnHomeTimerId = window.setTimeout(() => {
         window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
@@ -220,6 +303,7 @@ function LandingPage() {
     observer.observe(footer);
 
     return () => {
+      window.clearTimeout(scrollAnimationTimerRef.current);
       clearFooterTimer();
       window.clearTimeout(returnHomeTimerId);
       window.clearInterval(footerWatchIntervalId);
@@ -228,11 +312,11 @@ function LandingPage() {
       window.removeEventListener('hashchange', handleFooterAreaChange);
       observer.disconnect();
     };
-  }, []);
+  }, [scrollToSection]);
 
   return (
     <main className="landing">
-      <Header />
+      <Header onNavigate={scrollToSection} />
       <HeroSection />
       <AboutSection />
       <IntroFramesSection />
@@ -240,7 +324,7 @@ function LandingPage() {
       <FeaturesSection features={features} />
       <DeveloperSection />
       <FinalCta />
-      <Footer />
+      <Footer onNavigate={scrollToSection} />
     </main>
   );
 }
