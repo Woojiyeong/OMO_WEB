@@ -6,22 +6,11 @@ const footerLinks = [
   { href: '#developers', label: 'Contact' },
 ];
 
-function Footer({ onNavigate }) {
-  const handleNavigate = (event) => {
-    const sectionId = event.currentTarget.hash.slice(1);
-
-    if (!sectionId || !onNavigate) {
-      return;
-    }
-
-    event.preventDefault();
-    onNavigate(sectionId);
-  };
-
+function Footer() {
   return (
     <footer className="site-footer" id="footer">
       <div className="footer-brand">
-        <a href="#home" aria-label="오모 홈으로 이동" onClick={handleNavigate}>
+        <a href="#home" aria-label="오모 홈으로 이동">
           <img src="/omo.svg" alt="오모" />
         </a>
         <p>외출 전 코디 고민을 더 가볍게 만드는 AI OOTD 추천 서비스</p>
@@ -29,7 +18,7 @@ function Footer({ onNavigate }) {
 
       <nav className="footer-links" aria-label="푸터 메뉴">
         {footerLinks.map((item) => (
-          <a href={item.href} key={item.href} onClick={handleNavigate}>
+          <a href={item.href} key={item.href}>
             {item.label}
           </a>
         ))}
