@@ -3,7 +3,6 @@ const developers = [
     name: "우지영",
     role: "Frontend Developer",
     email: "Woojiyeong.dev@gmail.com",
-    phone: "010-8682-4402",
     github: "github.com/Woojiyeong",
     image: "/Proflie/woojiyeong.jpg",
   },
@@ -11,7 +10,6 @@ const developers = [
     name: "박홍준",
     role: "Backend Developer",
     email: "hongjun@hjun.kr",
-    phone: "010-4151-8644",
     github: "github.com/hJun-KR",
     image: "/Proflie/parkhongjun.png",
   },
@@ -50,14 +48,6 @@ function DeveloperSection() {
                   <dt>Email</dt>
                   <dd>
                     <a href={`mailto:${developer.email}`}>{developer.email}</a>
-                  </dd>
-                </div>
-                <div>
-                  <dt>Phone</dt>
-                  <dd>
-                    <a href={`tel:${developer.phone.replaceAll("-", "")}`}>
-                      {developer.phone}
-                    </a>
                   </dd>
                 </div>
                 <div>
